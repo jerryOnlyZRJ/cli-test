@@ -1,7 +1,10 @@
 #! /usr/bin/env node
 
+// cli驱动
 const program = require('commander')
+// 用户交互工具
 const inquirer = require('inquirer')
+// console.log填色美化
 const chalk = require('chalk')
 program
     .command('module')
@@ -9,14 +12,14 @@ program
     .description('创建新的模块')
     // 通过命令行传入的参数会被挂载在 program.name上
     .option('-a, --name [moduleName]', '传入模块名', moduleName => {
-        console.log("moduleName的配置是：", moduleName)
+        console.log(chalk.red("moduleName的配置是："), chalk.bold(moduleName))
         // 如果在option()方法里有回调则需要将传入参数传递下去，否则会被拦截
         return moduleName
     })
     .option('--sass', '启用sass')
     .option('--less', '启用less')
     .action(option => {
-        console.log("默认的option：", option)
+        // console.log("默认的option：", option)
         var config = Object.assign({
             name: '',
             description: '',
@@ -28,7 +31,7 @@ program
             promps.push({
                 type: 'input',
                 name: 'moduleName',
-                message: '请输入模块名称',
+                message: chalk.blue('请输入模块名称'),
                 validate: function (input) {
                     if (!input) {
                         return '不能为空'
@@ -41,7 +44,7 @@ program
             promps.push({
                 type: 'input',
                 name: 'moduleDescription',
-                message: '请输入模块描述'
+                message: chalk.magenta('请输入模块描述')
             })
         }
         if (config.sass === false && config.less === false) {
