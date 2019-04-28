@@ -16,21 +16,23 @@ program
         // 如果在option()方法里有回调则需要将传入参数传递下去，否则会被拦截
         return moduleName
     })
-    .option('--sass', '启用sass')
+    .option('--sass', '启用sass')   // 为提供传值的option会以boolean作为value
     .option('--less', '启用less')
     .action(option => {
-        // console.log("默认的option：", option)
+        // 一个对象，key 为 option 的 --name
+        // 如果用户在命令行阶段未传入值，则该对象中不存在该key
+        console.log("用户通过命令行定义的options：", option)
         var config = Object.assign({
-            name: '',
-            description: '',
+            name: undefined,
+            description: undefined,
             sass: false,
             less: false
         }, option)
         var promps = []
-        if (config.moduleName !== 'string') {
+        if (!config.name) {
             promps.push({
                 type: 'input',
-                name: 'moduleName',
+                name: 'name',
                 message: chalk.blue('请输入模块名称'),
                 validate: function (input) {
                     if (!input) {
@@ -40,10 +42,10 @@ program
                 }
             })
         }
-        if (config.description !== 'string') {
+        if (!config.description) {
             promps.push({
                 type: 'input',
-                name: 'moduleDescription',
+                name: 'description',
                 message: chalk.magenta('请输入模块描述')
             })
         }
@@ -64,13 +66,16 @@ program
             })
         }
         inquirer.prompt(promps).then(answers => {
-            console.log(answers)
+            console.log({
+                ...config,
+                ...answers,
+            })
         })
     })
     .on('--help', function () {
         console.log('  Examples:')
         console.log('')
-        console.log('$ app module moduleName')
-        console.log('$ app m moduleName')
+        console.log('$ cmd module moduleName')
+        console.log('$ cmd m moduleName')
     })
 program.parse(process.argv)
